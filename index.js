@@ -62,23 +62,39 @@ const generateUrlProfile = (username) => {
     return baseUrl;
 };
 
+
+// ...
 const downloadMediaFromList = async (list) => {
-    const folder = "downloads/"
-    list.forEach((item) => {
-        const fileName = `${item.id}.mp4`
-        const downloadFile = fetch(item.url)
-        const file = fs.createWriteStream(folder + fileName)
-        
-        downloadFile.then(res => {
-            res.body.pipe(file)
-            file.on("finish", () => {
-                file.close()
-                resolve()
+    const folder = "downloads/";
+    const downloadPromises = list.map(async (item) => {
+        const fileName = `${item.id}.mp4`;
+        const filePath = folder + fileName;
+
+        // Kontrol et: Dosya zaten varsa işlemi atla
+        if (fs.existsSync(filePath)) {
+            console.log(chalk.yellow(`[!] Video ${fileName} already exists. Skipping...`));
+            return Promise.resolve(); // Bu videoyu indirme işlemini tamamlandı olarak işaretle
+        }
+
+        const downloadFile = fetch(item.url);
+        const file = fs.createWriteStream(filePath);
+
+        return new Promise((resolve, reject) => {
+            downloadFile.then(res => {
+                res.body.pipe(file);
+                file.on("finish", () => {
+                    file.close();
+                    resolve();
+                });
+                file.on("error", (err) => reject(err));
             });
-            file.on("error", (err) => reject(err));
         });
     });
-}
+
+    return Promise.all(downloadPromises); // Tüm indirme işlemlerini bekleyin
+};
+
+// ...
 
 
 
