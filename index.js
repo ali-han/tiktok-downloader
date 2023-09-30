@@ -14,7 +14,6 @@ const { reject } = require("lodash");
 const {Headers} = require('node-fetch');
 const readline = require('readline');
 
-
 //adding useragent to avoid ip bans
 const headers = new Headers();
 headers.append('User-Agent', 'TikTok 26.2.0 rv:262018 (iPhone; iOS 14.4.2; en_US) Cronet');
@@ -196,6 +195,15 @@ const getIdVideo = (url) => {
     return (idVideo.length > 19) ? idVideo.substring(0, idVideo.indexOf("?")) : idVideo;
 }
 
+// Rastgele 1 ile 5 saniye arasında bekleme işlevi
+const randomSleep = () => {
+    const minWaitTime = 1000; // 1 saniye (1000 milisaniye)
+    const maxWaitTime = 5000; // 5 saniye (5000 milisaniye)
+    const waitTimeInMilliseconds = Math.floor(Math.random() * (maxWaitTime - minWaitTime + 1)) + minWaitTime;
+    
+    return new Promise(resolve => setTimeout(resolve, waitTimeInMilliseconds));
+};
+
 (async () => {    
     const header = "\r\n \/$$$$$$$$ \/$$$$$$ \/$$   \/$$ \/$$$$$$$$ \/$$$$$$  \/$$   \/$$       \/$$$$$$$   \/$$$$$$  \/$$      \/$$ \/$$   \/$$ \/$$        \/$$$$$$   \/$$$$$$  \/$$$$$$$  \/$$$$$$$$ \/$$$$$$$ \r\n|__  $$__\/|_  $$_\/| $$  \/$$\/|__  $$__\/\/$$__  $$| $$  \/$$\/      | $$__  $$ \/$$__  $$| $$  \/$ | $$| $$$ | $$| $$       \/$$__  $$ \/$$__  $$| $$__  $$| $$_____\/| $$__  $$\r\n   | $$     | $$  | $$ \/$$\/    | $$  | $$  \\ $$| $$ \/$$\/       | $$  \\ $$| $$  \\ $$| $$ \/$$$| $$| $$$$| $$| $$      | $$  \\ $$| $$  \\ $$| $$  \\ $$| $$      | $$  \\ $$\r\n   | $$     | $$  | $$$$$\/     | $$  | $$  | $$| $$$$$\/        | $$  | $$| $$  | $$| $$\/$$ $$ $$| $$ $$ $$| $$      | $$  | $$| $$$$$$$$| $$  | $$| $$$$$   | $$$$$$$\/\r\n   | $$     | $$  | $$  $$     | $$  | $$  | $$| $$  $$        | $$  | $$| $$  | $$| $$$$_  $$$$| $$  $$$$| $$      | $$  | $$| $$__  $$| $$  | $$| $$__\/   | $$__  $$\r\n   | $$     | $$  | $$\\  $$    | $$  | $$  | $$| $$\\  $$       | $$  | $$| $$  | $$| $$$\/ \\  $$$| $$\\  $$$| $$      | $$  | $$| $$  | $$| $$  | $$| $$      | $$  \\ $$\r\n   | $$    \/$$$$$$| $$ \\  $$   | $$  |  $$$$$$\/| $$ \\  $$      | $$$$$$$\/|  $$$$$$\/| $$\/   \\  $$| $$ \\  $$| $$$$$$$$|  $$$$$$\/| $$  | $$| $$$$$$$\/| $$$$$$$$| $$  | $$\r\n   |__\/   |______\/|__\/  \\__\/   |__\/   \\______\/ |__\/  \\__\/      |_______\/  \\______\/ |__\/     \\__\/|__\/  \\__\/|________\/ \\______\/ |__\/  |__\/|_______\/ |________\/|__\/  |__\/\r\n\n by n0l3r (https://github.com/n0l3r)\n"
     console.log(chalk.blue(header))
@@ -252,6 +260,9 @@ const getIdVideo = (url) => {
         var data = (choice.type == "With Watermark") ? await getVideoWM(listVideo[i]) : await getVideoNoWM(listVideo[i]);
 
         listMedia.push(data);
+
+        // Rastgele bir süre beklemek için randomSleep işlevini kullanabilirsiniz.
+        await randomSleep();
     }
 
     downloadMediaFromList(listMedia)
